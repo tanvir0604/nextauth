@@ -1,6 +1,7 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
 const API_URL = process.env.API_BASE_URL;
 
@@ -18,48 +19,45 @@ interface User {
 }
 
 const convertToSeconds = (expiresIn: string) => {
-    const match = expiresIn.match(/(\d+)([mhd])/); // Match "15m", "7d", etc.
+    const match = expiresIn.match(/(\d+)([mhd])/);
     if (!match) return 0;
 
     const value = parseInt(match[1], 10);
     const unit = match[2];
 
     switch (unit) {
-        case "m": // minutes
+        case "m":
             return value * 60;
-        case "h": // hours
+        case "h":
             return value * 60 * 60;
-        case "d": // days
+        case "d":
             return value * 60 * 60 * 24;
         default:
             return 0;
     }
 };
 
-export async function refreshToken() {
+export async function refreshToken(req: NextRequest) {
     try {
+        const refreshToken = req.cookies.get("refresh_token")?.value;
+        if (!refreshToken) {
+            throw new Error("Token refresh failed, no refresh token");
+        }
         const response: TokenResponse = await post(
             `${API_URL}/nestauth/refresh-token`,
             {
-                refresh_token: await getRefreshToken(),
+                refresh_token: refreshToken,
             },
             {},
             false
         );
 
-        console.log("response from nestauth api", response);
-
-        if (!response) {
+        if (!response || !response.accessToken || !response.refreshToken) {
             throw new Error("Token refresh failed, no response from api");
         }
 
-        if (!response.accessToken || !response.refreshToken) {
-            throw new Error(
-                "Token refresh failed, no access and refresh token"
-            );
-        }
-
-        (await cookies()).set("access_token", response.accessToken, {
+        const res = NextResponse.next();
+        res.cookies.set("access_token", response.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
@@ -67,17 +65,15 @@ export async function refreshToken() {
             maxAge: convertToSeconds(response.accessTokenExpiresIn),
         });
 
-        (await cookies()).set("refresh_token", response.refreshToken, {
+        res.cookies.set("refresh_token", response.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             path: "/",
             maxAge: convertToSeconds(response.refreshTokenExpiresIn),
         });
-
-        return response;
+        return res;
     } catch (error) {
-        console.error("Token refresh failed", error);
         throw new Error("Token refresh failed");
     }
 }
@@ -90,13 +86,11 @@ export async function authenticate(params: any) {
             {},
             false
         );
-
-        console.log("response", response);
         if (!response) {
             throw new Error("Login failed");
         }
-
-        (await cookies()).set("access_token", response.accessToken, {
+        const cookieStore = await cookies();
+        cookieStore.set("access_token", response.accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
@@ -104,7 +98,7 @@ export async function authenticate(params: any) {
             maxAge: convertToSeconds(response.accessTokenExpiresIn),
         });
 
-        (await cookies()).set("refresh_token", response.refreshToken, {
+        cookieStore.set("refresh_token", response.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
@@ -114,27 +108,14 @@ export async function authenticate(params: any) {
 
         return response;
     } catch (error) {
-        console.error("Login failed", error);
+        console.log(error);
         throw new Error("Login failed");
     }
 }
 
 export async function getAccessToken() {
-    const refresh_token = await getRefreshToken();
-    if (!refresh_token) {
-        return null;
-    }
     const cookieStore = await cookies();
     const access_token = cookieStore.get("access_token")?.value;
-    if (!access_token) {
-        const response = await get(
-            process.env.BASE_URL + `/api/auth/refresh`,
-            {},
-            {},
-            false
-        );
-        return response.accessToken ?? null;
-    }
     return access_token ?? null;
 }
 
@@ -151,16 +132,13 @@ export async function checkAuth() {
 
 export async function getUserInfo() {
     const accessToken = await getAccessToken();
-    console.log("accessToken", accessToken);
     if (!accessToken) {
         return null;
     }
     try {
         const decoded = jwtDecode(accessToken) as User;
-        console.log("decoded", decoded);
         return decoded;
     } catch (error) {
-        console.error("Invalid token", error);
         return null;
     }
 }
@@ -189,13 +167,13 @@ export async function get(
         const response = await axios.get(url, {
             headers: headerData,
             params: params,
+            withCredentials: true,
         });
         if (response.status === 200 || response.status === 201) {
             return response.data;
         }
         return null;
     } catch (error) {
-        console.log(error);
         return error;
     }
 }
@@ -217,14 +195,13 @@ export async function post(
     try {
         const response = await axios.post(url, data, {
             headers: headerData,
+            withCredentials: true,
         });
-        console.log("post response", response);
         if (response.status === 200 || response.status === 201) {
             return response.data;
         }
         return null;
     } catch (error) {
-        console.log(error);
         return error;
     }
 }

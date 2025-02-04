@@ -1,3 +1,4 @@
+import { NextRequest, NextResponse } from "next/server";
 interface TokenResponse {
     accessToken: string;
     refreshToken: string;
@@ -9,9 +10,9 @@ interface User {
     name: string;
     email: string;
 }
-export declare function refreshToken(): Promise<TokenResponse>;
+export declare function refreshToken(req: NextRequest): Promise<NextResponse<unknown>>;
 export declare function authenticate(params: any): Promise<TokenResponse>;
-export declare function getAccessToken(): Promise<any>;
+export declare function getAccessToken(): Promise<string>;
 export declare function getRefreshToken(): Promise<string>;
 export declare function checkAuth(): Promise<boolean>;
 export declare function getUserInfo(): Promise<User>;
