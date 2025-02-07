@@ -28,7 +28,7 @@ You can use the `checkAuth` and `refreshToken` functions in your Next.js middlew
 
 ```typescript
 import { NextRequest, NextResponse } from "next/server";
-import { checkAuth, refreshToken } from "nextauth";
+import { checkAuth, refreshToken } from "@next-nest-auth/nextauth";
 
 export async function middleware(req: NextRequest) {
     const protectedRoutes = ["/dashboard", "/profile", "/settings"];
@@ -62,7 +62,7 @@ export const config = {
 This function authenticates the user and sets the access and refresh tokens in cookies.
 
 ```typescript
-import { authenticate } from "nextauth";
+import { authenticate } from "@next-nest-auth/nextauth";
 
 const response = await authenticate({
     username: "user",
@@ -75,7 +75,7 @@ const response = await authenticate({
 This function is responsible for refreshing the access token using the refresh token stored in cookies.
 
 ```typescript
-import { refreshToken } from "nextauth";
+import { refreshToken } from "@next-nest-auth/nextauth";
 
 const refreshedResponse = await refreshToken(req);
 ```
@@ -85,7 +85,7 @@ const refreshedResponse = await refreshToken(req);
 This function retrieves the user information from the access token.
 
 ```typescript
-import { getUserInfo } from "nextauth";
+import { getUserInfo } from "@next-nest-auth/nextauth";
 
 const userInfo = await getUserInfo();
 ```
@@ -95,7 +95,7 @@ const userInfo = await getUserInfo();
 These functions retrieve the current access token and refresh token from the cookies.
 
 ```typescript
-import { getAccessToken, getRefreshToken } from "nextauth";
+import { getAccessToken, getRefreshToken } from "@next-nest-auth/nextauth";
 
 const accessToken = await getAccessToken();
 const refreshToken = await getRefreshToken();
@@ -106,7 +106,7 @@ const refreshToken = await getRefreshToken();
 This function checks if the user is authenticated by verifying the access token.
 
 ```typescript
-import { checkAuth } from "nextauth";
+import { checkAuth } from "@next-nest-auth/nextauth";
 
 const authenticated = await checkAuth();
 ```
@@ -116,7 +116,7 @@ const authenticated = await checkAuth();
 This function deletes the access and refresh tokens from cookies.
 
 ```typescript
-import { logout } from "nextauth";
+import { logout } from "@next-nest-auth/nextauth";
 
 await logout();
 ```
@@ -126,7 +126,7 @@ await logout();
 These are helper functions to make authenticated HTTP requests using Axios.
 
 ```typescript
-import { get, post } from "nextauth";
+import { get, post } from "@next-nest-auth/nextauth";
 
 const data = await get("/some-api-endpoint");
 const postData = await post("/some-api-endpoint", { someData: "value" });
