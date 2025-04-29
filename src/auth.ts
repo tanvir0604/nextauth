@@ -16,6 +16,11 @@ interface User {
     id: string;
     name: string;
     email: string;
+    mobile: string;
+    role: string;
+    pic: string;
+    macId: string;
+    [key: string]: any;
 }
 
 const convertToSeconds = (expiresIn: string) => {
