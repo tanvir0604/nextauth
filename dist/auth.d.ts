@@ -9,6 +9,11 @@ interface User {
     id: string;
     name: string;
     email: string;
+    mobile: string;
+    role: string;
+    pic: string;
+    macId: string;
+    [key: string]: any;
 }
 export declare function refreshToken(req: NextRequest): Promise<NextResponse<unknown>>;
 export declare function authenticate(params: any): Promise<TokenResponse>;
