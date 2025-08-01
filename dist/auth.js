@@ -49,19 +49,19 @@ async function refreshToken(req) {
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             path: "/",
-            maxAge: convertToSeconds(response.accessTokenExpiresIn),
+            maxAge: convertToSeconds(response.accessTokenExpiresIn ?? ""),
         });
         res.cookies.set("refresh_token", response.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             path: "/",
-            maxAge: convertToSeconds(response.refreshTokenExpiresIn),
+            maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ""),
         });
         return res;
     }
     catch (error) {
-        throw new Error("Token refresh failed");
+        throw new Error(error);
     }
 }
 async function authenticate(params) {
@@ -76,20 +76,19 @@ async function authenticate(params) {
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             path: "/",
-            maxAge: convertToSeconds(response.accessTokenExpiresIn),
+            maxAge: convertToSeconds(response.accessTokenExpiresIn ?? ""),
         });
         cookieStore.set("refresh_token", response.refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             path: "/",
-            maxAge: convertToSeconds(response.refreshTokenExpiresIn),
+            maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ""),
         });
         return response;
     }
     catch (error) {
-        console.log(error);
-        throw new Error("Login failed");
+        throw new Error(error);
     }
 }
 async function getAccessToken() {
