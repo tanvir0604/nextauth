@@ -67,7 +67,11 @@ async function refreshToken(req) {
 async function authenticate(params) {
     try {
         const response = await post(`${API_URL}/nestauth/login`, params, {}, false);
-        if (!response) {
+        if (!response ||
+            !response.accessToken ||
+            !response.refreshToken ||
+            !response.accessTokenExpiresIn ||
+            !response.refreshTokenExpiresIn) {
             throw new Error("Login failed");
         }
         const cookieStore = await (0, headers_1.cookies)();

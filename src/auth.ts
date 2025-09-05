@@ -91,7 +91,13 @@ export async function authenticate(params: any) {
             {},
             false
         );
-        if (!response) {
+        if (
+            !response ||
+            !response.accessToken ||
+            !response.refreshToken ||
+            !response.accessTokenExpiresIn ||
+            !response.refreshTokenExpiresIn
+        ) {
             throw new Error("Login failed");
         }
         const cookieStore = await cookies();
