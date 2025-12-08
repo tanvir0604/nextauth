@@ -19,6 +19,7 @@ NODE_ENV=development
 -   `BASE_URL`: The URL of your Next.js frontend.
 -   `API_BASE_URL`: The URL of your NestJS backend.
 -   `NODE_ENV`: The environment mode (`development`, `production`).
+-   `AUTOEXPIRE_REFRESH_TOKEN`: (Optional) A boolean value to determine whether to automatically expire the refresh token or not. Default is `false`.
 
 ## Middleware Usage
 
