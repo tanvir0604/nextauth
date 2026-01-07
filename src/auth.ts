@@ -71,6 +71,11 @@ export async function refreshToken(req: NextRequest) {
         });
 
         if (!process.env.AUTOEXPIRE_REFRESH_TOKEN) {
+            if (process.env.NODE_ENV === "development") {
+                console.log(
+                    "refresh token is not expired and updating expires in"
+                );
+            }
             res.cookies.set("refresh_token", response.refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",

@@ -51,13 +51,18 @@ async function refreshToken(req) {
             path: "/",
             maxAge: convertToSeconds(response.accessTokenExpiresIn ?? ""),
         });
-        res.cookies.set("refresh_token", response.refreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            path: "/",
-            maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ""),
-        });
+        if (!process.env.AUTOEXPIRE_REFRESH_TOKEN) {
+            if (process.env.NODE_ENV === "development") {
+                console.log("refresh token is not expired and updating expires in");
+            }
+            res.cookies.set("refresh_token", response.refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+                maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ""),
+            });
+        }
         return res;
     }
     catch (error) {
