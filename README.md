@@ -11,15 +11,18 @@ Before using this package, please make sure to read the documentation of `@next-
 In order to use this package correctly, you need to set up the following environment variables:
 
 ```
+NODE_ENV=development
 BASE_URL=http://localhost:3000
 API_BASE_URL=http://localhost:3001
-NODE_ENV=development
+or
+NEXT_PUBLIC_API_URL=http://localhost:3001
+
 ```
 
--   `BASE_URL`: The URL of your Next.js frontend.
--   `API_BASE_URL`: The URL of your NestJS backend.
--   `NODE_ENV`: The environment mode (`development`, `production`).
--   `AUTOEXPIRE_REFRESH_TOKEN`: (Optional) A boolean value to determine whether to automatically expire the refresh token or not. Default is `false`.
+- `BASE_URL`: The URL of your Next.js frontend.
+- `API_BASE_URL | NEXT_PUBLIC_API_URL`: The URL of your NestJS backend.
+- `NODE_ENV`: The environment mode (`development`, `production`).
+- `AUTOEXPIRE_REFRESH_TOKEN`: (Optional) A boolean value to determine whether to automatically expire the refresh token or not. Default is `false`.
 
 ## Middleware Usage
 
@@ -28,15 +31,13 @@ You can use the `checkAuth` and `refreshToken` functions in your Next.js middlew
 ### Example Usage:
 
 ```typescript
-import { NextRequest, NextResponse } from "next/server";
-import { checkAuth, refreshToken } from "@next-nest-auth/nextauth";
+import { NextRequest, NextResponse } from 'next/server';
+import { checkAuth, refreshToken } from '@next-nest-auth/nextauth';
 
 export async function middleware(req: NextRequest) {
-    const protectedRoutes = ["/dashboard", "/profile", "/settings"];
+    const protectedRoutes = ['/dashboard', '/profile', '/settings'];
 
-    if (
-        protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route))
-    ) {
+    if (protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route))) {
         const authenticated = await checkAuth();
         if (!authenticated) {
             try {
@@ -44,7 +45,7 @@ export async function middleware(req: NextRequest) {
                 // Check other logics
                 return response;
             } catch (error) {
-                return NextResponse.redirect(new URL("/", req.url));
+                return NextResponse.redirect(new URL('/', req.url));
             }
         }
     }
@@ -52,7 +53,7 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/dashboard/:path*", "/profile/:path*", "/settings/:path*"],
+    matcher: ['/dashboard/:path*', '/profile/:path*', '/settings/:path*'],
 };
 ```
 
@@ -63,11 +64,11 @@ export const config = {
 This function authenticates the user and sets the access and refresh tokens in cookies.
 
 ```typescript
-import { authenticate } from "@next-nest-auth/nextauth";
+import { authenticate } from '@next-nest-auth/nextauth';
 
 const response = await authenticate({
-    username: "user",
-    password: "password",
+    username: 'user',
+    password: 'password',
 });
 ```
 
@@ -76,7 +77,7 @@ const response = await authenticate({
 This function is responsible for refreshing the access token using the refresh token stored in cookies.
 
 ```typescript
-import { refreshToken } from "@next-nest-auth/nextauth";
+import { refreshToken } from '@next-nest-auth/nextauth';
 
 const refreshedResponse = await refreshToken(req);
 ```
@@ -86,7 +87,7 @@ const refreshedResponse = await refreshToken(req);
 This function retrieves the user information from the access token.
 
 ```typescript
-import { getUserInfo } from "@next-nest-auth/nextauth";
+import { getUserInfo } from '@next-nest-auth/nextauth';
 
 const userInfo = await getUserInfo();
 ```
@@ -96,7 +97,7 @@ const userInfo = await getUserInfo();
 These functions retrieve the current access token and refresh token from the cookies.
 
 ```typescript
-import { getAccessToken, getRefreshToken } from "@next-nest-auth/nextauth";
+import { getAccessToken, getRefreshToken } from '@next-nest-auth/nextauth';
 
 const accessToken = await getAccessToken();
 const refreshToken = await getRefreshToken();
@@ -107,7 +108,7 @@ const refreshToken = await getRefreshToken();
 This function checks if the user is authenticated by verifying the access token.
 
 ```typescript
-import { checkAuth } from "@next-nest-auth/nextauth";
+import { checkAuth } from '@next-nest-auth/nextauth';
 
 const authenticated = await checkAuth();
 ```
@@ -117,7 +118,7 @@ const authenticated = await checkAuth();
 This function deletes the access and refresh tokens from cookies.
 
 ```typescript
-import { logout } from "@next-nest-auth/nextauth";
+import { logout } from '@next-nest-auth/nextauth';
 
 await logout();
 ```
@@ -127,10 +128,10 @@ await logout();
 These are helper functions to make authenticated HTTP requests using Axios.
 
 ```typescript
-import { get, post } from "@next-nest-auth/nextauth";
+import { get, post } from '@next-nest-auth/nextauth';
 
-const data = await get("/some-api-endpoint");
-const postData = await post("/some-api-endpoint", { someData: "value" });
+const data = await get('/some-api-endpoint');
+const postData = await post('/some-api-endpoint', { someData: 'value' });
 ```
 
 ## License
