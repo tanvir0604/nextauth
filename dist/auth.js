@@ -77,7 +77,13 @@ async function authenticate(params) {
             !response.refreshToken ||
             !response.accessTokenExpiresIn ||
             !response.refreshTokenExpiresIn) {
-            throw new Error('Login failed');
+            throw new Error('Login failed' +
+                ' API URL: ' +
+                API_URL +
+                ' params: ' +
+                JSON.stringify(params) +
+                ' response: ' +
+                JSON.stringify(response));
         }
         const cookieStore = await (0, headers_1.cookies)();
         cookieStore.set('access_token', response.accessToken, {
