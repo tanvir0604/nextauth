@@ -21,11 +21,11 @@ const convertToSeconds = (expiresIn) => {
     const value = parseInt(match[1], 10);
     const unit = match[2];
     switch (unit) {
-        case 'm':
+        case "m":
             return value * 60;
-        case 'h':
+        case "h":
             return value * 60 * 60;
-        case 'd':
+        case "d":
             return value * 60 * 60 * 24;
         default:
             return 0;
@@ -33,34 +33,34 @@ const convertToSeconds = (expiresIn) => {
 };
 async function refreshToken(req) {
     try {
-        const refreshToken = req.cookies.get('refresh_token')?.value;
+        const refreshToken = req.cookies.get("refresh_token")?.value;
         if (!refreshToken) {
-            throw new Error('Token refresh failed, no refresh token');
+            throw new Error("Token refresh failed, no refresh token");
         }
         const response = await post(`${API_URL}/nestauth/refresh-token`, {
             refresh_token: refreshToken,
         }, {}, false);
         if (!response || !response.accessToken || !response.refreshToken) {
-            throw new Error('Token refresh failed, no response from api');
+            throw new Error("Token refresh failed, no response from api");
         }
         const res = server_1.NextResponse.next();
-        res.cookies.set('access_token', response.accessToken, {
+        res.cookies.set("access_token", response.accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            path: '/',
-            maxAge: convertToSeconds(response.accessTokenExpiresIn ?? ''),
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: convertToSeconds(response.accessTokenExpiresIn ?? ""),
         });
         if (!process.env.AUTOEXPIRE_REFRESH_TOKEN) {
-            if (process.env.NODE_ENV === 'development') {
-                console.log('refresh token is not expired and updating expires in');
+            if (process.env.NODE_ENV === "development") {
+                console.log("refresh token is not expired and updating expires in");
             }
-            res.cookies.set('refresh_token', response.refreshToken, {
+            res.cookies.set("refresh_token", response.refreshToken, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
-                path: '/',
-                maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ''),
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                path: "/",
+                maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ""),
             });
         }
         return res;
@@ -77,28 +77,28 @@ async function authenticate(params) {
             !response.refreshToken ||
             !response.accessTokenExpiresIn ||
             !response.refreshTokenExpiresIn) {
-            throw new Error('Login failed' +
-                ' API URL: ' +
+            throw new Error("Login failed" +
+                " API URL: " +
                 API_URL +
-                ' params: ' +
+                " params: " +
                 JSON.stringify(params) +
-                ' response: ' +
+                " response: " +
                 JSON.stringify(response));
         }
         const cookieStore = await (0, headers_1.cookies)();
-        cookieStore.set('access_token', response.accessToken, {
+        cookieStore.set("access_token", response.accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            path: '/',
-            maxAge: convertToSeconds(response.accessTokenExpiresIn ?? ''),
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: convertToSeconds(response.accessTokenExpiresIn ?? ""),
         });
-        cookieStore.set('refresh_token', response.refreshToken, {
+        cookieStore.set("refresh_token", response.refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            path: '/',
-            maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ''),
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ""),
         });
         return response;
     }
@@ -108,12 +108,12 @@ async function authenticate(params) {
 }
 async function getAccessToken() {
     const cookieStore = await (0, headers_1.cookies)();
-    const access_token = cookieStore.get('access_token')?.value;
+    const access_token = cookieStore.get("access_token")?.value;
     return access_token ?? null;
 }
 async function getRefreshToken() {
     const cookieStore = await (0, headers_1.cookies)();
-    const refresh_token = cookieStore.get('refresh_token')?.value;
+    const refresh_token = cookieStore.get("refresh_token")?.value;
     return refresh_token ?? null;
 }
 async function checkAuth() {
@@ -134,17 +134,17 @@ async function getUserInfo() {
     }
 }
 async function logout() {
-    (await (0, headers_1.cookies)()).delete('access_token');
-    (await (0, headers_1.cookies)()).delete('refresh_token');
+    (await (0, headers_1.cookies)()).delete("access_token");
+    (await (0, headers_1.cookies)()).delete("refresh_token");
 }
 async function get(url, params = {}, headers = {}, secured = true) {
     const headerData = {
-        Authorization: '',
+        Authorization: "",
         ...headers,
     };
     if (secured) {
         const accessToken = await getAccessToken();
-        headerData.Authorization = 'Bearer ' + accessToken;
+        headerData.Authorization = "Bearer " + accessToken;
     }
     try {
         const response = await axios_1.default.get(url, {
@@ -163,12 +163,12 @@ async function get(url, params = {}, headers = {}, secured = true) {
 }
 async function post(url, data = {}, headers = {}, secured = true) {
     const headerData = {
-        Authorization: '',
+        Authorization: "",
         ...headers,
     };
     if (secured) {
         const accessToken = await getAccessToken();
-        headerData.Authorization = 'Bearer ' + accessToken;
+        headerData.Authorization = "Bearer " + accessToken;
     }
     try {
         const response = await axios_1.default.post(url, data, {

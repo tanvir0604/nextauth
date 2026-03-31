@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 interface TokenResponse {
     accessToken: string;
     refreshToken: string;
@@ -6,7 +6,7 @@ interface TokenResponse {
     refreshTokenExpiresIn: string;
 }
 interface User {
-    id: string;
+    sub: string;
     name: string;
     email: string;
     mobile: string;
