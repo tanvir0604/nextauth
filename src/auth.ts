@@ -65,7 +65,7 @@ export async function refreshToken(req: NextRequest) {
     res.cookies.set("access_token", response.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "lax" as const,
       path: "/",
       maxAge: convertToSeconds(response.accessTokenExpiresIn ?? ""),
     });
@@ -77,7 +77,7 @@ export async function refreshToken(req: NextRequest) {
       res.cookies.set("refresh_token", response.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "lax" as const,
         path: "/",
         maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ""),
       });
@@ -118,7 +118,7 @@ export async function authenticate(params: any) {
     cookieStore.set("access_token", response.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "lax" as const,
       path: "/",
       maxAge: convertToSeconds(response.accessTokenExpiresIn ?? ""),
     });
@@ -126,7 +126,7 @@ export async function authenticate(params: any) {
     cookieStore.set("refresh_token", response.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "lax" as const,
       path: "/",
       maxAge: convertToSeconds(response.refreshTokenExpiresIn ?? ""),
     });
