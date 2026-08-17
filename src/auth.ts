@@ -3,7 +3,8 @@ import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL = process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_URL;
+const API_URL =
+  process.env.NEXT_AUTH_API_URL || process.env.NEXT_PUBLIC_AUTH_API_URL;
 
 interface TokenResponse {
   accessToken: string;
@@ -106,15 +107,7 @@ export async function authenticate(params: any) {
       !response.accessTokenExpiresIn ||
       !response.refreshTokenExpiresIn
     ) {
-      throw new Error(
-        "Login failed" +
-          " API URL: " +
-          API_URL +
-          " params: " +
-          JSON.stringify(params) +
-          " response: " +
-          JSON.stringify(response),
-      );
+      throw new Error("Login failed: invalid response from authentication API");
     }
     const cookieStore = await cookies();
     cookieStore.set("access_token", response.accessToken, {
@@ -135,7 +128,6 @@ export async function authenticate(params: any) {
 
     return response;
   } catch (error: any) {
-    // console.log(error);
     throw new Error(error?.message ?? "Login failed");
   }
 }
@@ -201,7 +193,7 @@ export async function get(
     }
     return null;
   } catch (error) {
-    return error;
+    throw error;
   }
 }
 
@@ -229,6 +221,6 @@ export async function post(
     }
     return null;
   } catch (error) {
-    return error;
+    throw error;
   }
 }

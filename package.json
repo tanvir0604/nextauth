@@ -1,11 +1,22 @@
 {
   "name": "@next-nest-auth/nextauth",
-  "version": "0.2.6",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "version": "0.3.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "tsc -w",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "nextjs",
@@ -33,20 +44,19 @@
   "type": "commonjs",
   "description": "NextAuth is a frontend authentication package designed for Next.js applications, providing easy integration with NestJS-based backends. It supports login, session management, and token handling (including JWT and refresh tokens) to ensure secure user authentication. With customizable authentication flows and compatibility with multiple providers, NextAuth enables seamless integration between NestJS and Next.js apps.",
   "dependencies": {
-    "axios": "^1.13.2",
-    "js-cookie": "^3.0.5",
-    "jsonwebtoken": "^9.0.3",
-    "jwt-decode": "^4.0.0",
-    "next": "^16.1.1"
+    "axios": "^1.19.0",
+    "jwt-decode": "^4.0.0"
+  },
+  "peerDependencies": {
+    "next": "^13.4.0 || ^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "devDependencies": {
-    "@types/js-cookie": "^3.0.6",
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
+    "next": "^16.1.1",
     "typescript": "^5.9.3"
   },
   "files": [
-    "dist/",
-    "src/"
+    "dist/"
   ]
 }
